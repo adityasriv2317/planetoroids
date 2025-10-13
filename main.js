@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 // import canvas where the scenes are rendered
 const canvas = document.querySelector(".mainCanvas");
@@ -26,8 +27,14 @@ scene.add(camera); // add the camera to the scene
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize(sizes.width, sizes.height);
 
+// controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; // smooth camera movement
+
+const textureLoader = new THREE.TextureLoader();
+
 // adding light source
-const light = new THREE.PointLight(0xffffff);
+const light = new THREE.PointLight(0xffffff, 100); // color, intensity, distance
 light.position.set(0, 0, 0); //center at the sun
 scene.add(light);
 
@@ -52,26 +59,34 @@ const stars = new THREE.Points(starsGeometry, starsMaterial);
 scene.add(stars);
 
 // sun
+const sunTexture = textureLoader.load("./assets/sunmap.jpg");
 const sunGeometry = new THREE.SphereGeometry(1, 32, 32); //radius, widthSegments, heightSegments
-const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // yellow color material
+const sunMaterial = new THREE.MeshStandardMaterial({
+  emissiveMap: sunTexture,
+  emissive: 0xffff00,
+  emissiveIntensity: 1.5,
+}); // yellow color material
 const sun = new THREE.Mesh(sunGeometry, sunMaterial); // creating the sun mesh using the geometry and material
 scene.add(sun); // add the sun to the scene
 
 // mercury
+const mercuryTexture = textureLoader.load("./assets/mercurymap.jpg");
 const mercuryGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-const mercuryMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 }); // grey color material
+const mercuryMaterial = new THREE.MeshStandardMaterial({ map: mercuryTexture }); // grey color material
 const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
 scene.add(mercury);
 
 // venus
+const venusTexture = textureLoader.load("./assets/venusmap.jpg");
 const venusGeometry = new THREE.SphereGeometry(0.32, 32, 32);
-const venusMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 }); // orange color material
+const venusMaterial = new THREE.MeshStandardMaterial({ map: venusTexture }); // orange color material
 const venus = new THREE.Mesh(venusGeometry, venusMaterial);
 scene.add(venus);
 
 // earth
+const earthTexture = textureLoader.load("./assets/earthmap.jpg");
 const earthGeometry = new THREE.SphereGeometry(0.35, 32, 32);
-const earthMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff }); // blue color material
+const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture }); // blue color material
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
 
@@ -86,7 +101,7 @@ const animate = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // rotate sun
-  sun.rotation.x += 0.005;
+  sun.rotation.y += 0.005;
 
   // setup mercury
   mercury.position.x = Math.cos(elapsedTime * 1) * 2.5;
@@ -102,6 +117,9 @@ const animate = () => {
   earth.position.x = Math.cos(elapsedTime * 0.5) * 5.5;
   earth.position.z = Math.sin(elapsedTime * 0.5) * 5.5;
   earth.rotation.y += 0.01; // rotate earth
+
+  // Update controls
+  controls.update();
 
   window.requestAnimationFrame(animate);
   renderer.render(scene, camera);
