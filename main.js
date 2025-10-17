@@ -1,19 +1,18 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { createCelestialBody } from "./createCelestialBody.js";
 import { planetData } from "./planetData.js";
+import { initializeScene } from "./sceneSetup.js";
+import { setupInteractions } from "./interactions.js";
 
 // ui references
-const infoPanel = document.getElementById("info-panel");
-const planetNameElement = document.getElementById("planet-name");
-const planetInfoElement = document.getElementById("planet-info");
-const closeButton = document.getElementById("close-button");
+const uiElements = {
+  infoPanel: document.getElementById("info-panel"),
+  planetNameElement: document.getElementById("planet-name"),
+  planetInfoElement: document.getElementById("planet-info"),
+  closeButton: document.getElementById("close-button"),
+};
 
-// import canvas where the scenes are rendered
 const canvas = document.querySelector(".mainCanvas");
-
-// create a scene
-const scene = new THREE.Scene();
 
 // size constants
 const sizes = {
@@ -21,27 +20,11 @@ const sizes = {
   height: window.innerHeight,
 };
 
-// camera setup
-const camera = new THREE.PerspectiveCamera(
-  75,
-  sizes.width / sizes.height,
-  0.1,
-  1000
-);
-camera.position.z = 15; // move the camera backwards so we can see the scene
-scene.add(camera); // add the camera to the scene
-
 // renderer
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize(sizes.width, sizes.height);
-
-// controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // smooth camera movement
-
-// mouse and raycaster
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+const { scene, camera, controls } = initializeScene(renderer, sizes);
+const clock = new THREE.Clock();
 
 // texture loader
 const textureLoader = new THREE.TextureLoader();
@@ -53,8 +36,6 @@ scene.add(light);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.08); // White light, low intensity
 scene.add(ambientLight);
-
-// objects
 
 // starfield
 const starsGeometry = new THREE.BufferGeometry();
@@ -76,7 +57,7 @@ scene.add(stars);
 
 // sun
 const sun = createCelestialBody(1, "./assets/sunmap.jpg", "sun", true);
-scene.add(sun); 
+scene.add(sun);
 
 // mercury
 const mercury = createCelestialBody(0.2, "./assets/mercurymap.jpg", "mercury");
@@ -113,7 +94,6 @@ const temp = new THREE.Vector3();
 for (let i = 0; i < pos.count; i++) {
   temp.fromBufferAttribute(pos, i);
   const radius = temp.length();
-  // inner radius ~0.7 → uv.x = 0, outer radius ~1.2 → uv.x = 1
   uv.setXY(i, THREE.MathUtils.mapLinear(radius, 0.7, 1.2, 0, 1), 1);
 }
 ringsGeometry.attributes.uv.needsUpdate = true;
@@ -199,11 +179,6 @@ saturnOrbit.userData.planet = saturn;
 uranusOrbit.userData.planet = uranus;
 neptuneOrbit.userData.planet = neptune;
 
-// making the clock for animations
-const clock = new THREE.Clock();
-
-// render the scene
-// renderer.render(scene, camera);
 
 // making an animation loop
 const animate = () => {
@@ -261,8 +236,6 @@ const animate = () => {
 
 animate();
 
-// raycasting on planet clicks
-
 // planet enums
 const interactiveObjects = [
   mercury,
@@ -283,86 +256,4 @@ const interactiveObjects = [
   neptuneOrbit,
 ];
 
-// hover
-let currentHovered = null;
-
-function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(interactiveObjects);
-
-  // If we are hovering over something new
-  if (intersects.length > 0) {
-    let newHovered = intersects[0].object;
-    // If it's an orbit, get its planet
-    if (newHovered.userData.planet) {
-      newHovered = newHovered.userData.planet;
-    }
-
-    // If the new object is different from the old one
-    if (currentHovered !== newHovered) {
-      // Un-highlight the old object if it exists
-      if (currentHovered) {
-        currentHovered.material.emissive.setHex(0x000000);
-        currentHovered.userData.orbit.visible = false;
-      }
-
-      // Highlight the new one
-      currentHovered = newHovered;
-      currentHovered.material.emissive.setHex(0xaaaaaa555555);
-      currentHovered.userData.orbit.visible = true;
-    }
-  }
-  // If we are not hovering over anything
-  else {
-    // Un-highlight the old object if it exists
-    if (currentHovered) {
-      currentHovered.material.emissive.setHex(0x000000);
-      currentHovered.userData.orbit.visible = false;
-    }
-    currentHovered = null;
-  }
-}
-window.addEventListener("mousemove", onMouseMove);
-
-// click
-function onPlanetClick(e) {
-  // calculate mouse position from -1 to +1
-  mouse.x = (e.clientX / sizes.width) * 2 - 1;
-  mouse.y = -(e.clientY / sizes.height) * 2 + 1;
-
-  // update the raycaster with the camera and mouse position
-  raycaster.setFromCamera(mouse, camera);
-
-  // calculate objects intersecting the picking ray
-  const intersects = raycaster.intersectObjects(interactiveObjects);
-
-  if (intersects.length > 0) {
-    let clickedObject = intersects[0].object;
-
-    // If the orbit was clicked, get the associated planet
-    if (clickedObject.userData.planet) {
-      clickedObject = clickedObject.userData.planet;
-    }
-
-    const planetName = currentHovered.name;
-    // Check if we have data for this planet
-    if (planetData[planetName]) {
-      // Populate the panel
-      planetNameElement.textContent =
-        planetName.charAt(0).toUpperCase() + planetName.slice(1);
-      planetInfoElement.textContent = planetData[planetName].info;
-
-      // Show the panel
-      infoPanel.classList.remove("hidden");
-    }
-  }
-}
-
-window.addEventListener("click", onPlanetClick);
-window.addEventListener("mousemove", onMouseMove);
-closeButton.addEventListener("click", () => {
-  infoPanel.classList.add("hidden");
-});
+setupInteractions(camera, interactiveObjects, uiElements, planetData, sizes);
