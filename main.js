@@ -1,41 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-// planet data
-const planetData = {
-  mercury: {
-    name: "Mercury",
-    info: "Mercury is the smallest planet in our solar system and closest to the Sun.",
-  },
-  venus: {
-    name: "Venus",
-    info: "Venus is the second planet from the Sun and has a thick, toxic atmosphere.",
-  },
-  earth: {
-    name: "Earth",
-    info: "Earth is the third planet from the Sun and the only known planet to support life.",
-  },
-  mars: {
-    name: "Mars",
-    info: "Mars is the fourth planet from the Sun and is known as the Red Planet.",
-  },
-  jupiter: {
-    name: "Jupiter",
-    info: "Jupiter is the largest planet in our solar system and is known for its Great Red Spot.",
-  },
-  saturn: {
-    name: "Saturn",
-    info: "Saturn is the sixth planet from the Sun and is famous for its stunning ring system.",
-  },
-  uranus: {
-    name: "Uranus",
-    info: "Uranus is the seventh planet from the Sun and has a unique sideways rotation.",
-  },
-  neptune: {
-    name: "Neptune",
-    info: "Neptune is the eighth and farthest known planet from the Sun in our solar system.",
-  },
-};
+import { createCelestialBody } from "./createCelestialBody.js";
+import { planetData } from "./planetData.js";
 
 // ui references
 const infoPanel = document.getElementById("info-panel");
@@ -109,63 +75,33 @@ const stars = new THREE.Points(starsGeometry, starsMaterial);
 scene.add(stars);
 
 // sun
-const sunTexture = textureLoader.load("./assets/sunmap.jpg");
-const sunGeometry = new THREE.SphereGeometry(1, 32, 32); //radius, widthSegments, heightSegments
-const sunMaterial = new THREE.MeshStandardMaterial({
-  emissiveMap: sunTexture,
-  emissive: 0xffff00,
-  emissiveIntensity: 1.5,
-}); // yellow color material
-const sun = new THREE.Mesh(sunGeometry, sunMaterial); // creating the sun mesh using the geometry and material
-scene.add(sun); // add the sun to the scene
+const sun = createCelestialBody(1, "./assets/sunmap.jpg", "sun", true);
+scene.add(sun); 
 
 // mercury
-const mercuryTexture = textureLoader.load("./assets/mercurymap.jpg");
-const mercuryGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-const mercuryMaterial = new THREE.MeshStandardMaterial({ map: mercuryTexture }); // grey color material
-const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
-mercury.name = "mercury";
+const mercury = createCelestialBody(0.2, "./assets/mercurymap.jpg", "mercury");
 scene.add(mercury);
 
 // venus
-const venusTexture = textureLoader.load("./assets/venusmap.jpg");
-const venusGeometry = new THREE.SphereGeometry(0.33, 32, 32);
-const venusMaterial = new THREE.MeshStandardMaterial({ map: venusTexture }); // orange color material
-const venus = new THREE.Mesh(venusGeometry, venusMaterial);
-venus.name = "venus";
+const venus = createCelestialBody(0.33, "./assets/venusmap.jpg", "venus");
 scene.add(venus);
 
 // earth
-const earthTexture = textureLoader.load("./assets/earthmap.jpg");
-const earthGeometry = new THREE.SphereGeometry(0.35, 32, 32);
-const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture }); // blue color material
-const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-earth.name = "earth";
+const earth = createCelestialBody(0.35, "./assets/earthmap.jpg", "earth");
 scene.add(earth);
 
 // mars
-const marsTexture = textureLoader.load("./assets/marsmap.jpg");
-const marsGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture }); // red color material
-const mars = new THREE.Mesh(marsGeometry, marsMaterial);
-mars.name = "mars";
+const mars = createCelestialBody(0.27, "./assets/marsmap.jpg", "mars");
 scene.add(mars);
 
 // jupiter
-const jupiterTexture = textureLoader.load("./assets/jupitermap.jpg");
-const jupiterGeometry = new THREE.SphereGeometry(0.7, 32, 32);
-const jupiterMaterial = new THREE.MeshStandardMaterial({ map: jupiterTexture }); // brown color material
-const jupiter = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
-jupiter.name = "jupiter";
+const jupiter = createCelestialBody(0.7, "./assets/jupitermap.jpg", "jupiter");
 scene.add(jupiter);
 
 // saturn
-const saturnTexture = textureLoader.load("./assets/saturnmap.jpg");
-const saturnGeometry = new THREE.SphereGeometry(0.6, 32, 32);
-const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture }); // yellow-brown color material
-const saturn = new THREE.Mesh(saturnGeometry, saturnMaterial);
-saturn.name = "saturn";
+const saturn = createCelestialBody(0.6, "./assets/saturnmap.jpg", "saturn");
 scene.add(saturn);
+
 // saturn's rings
 const ringsTexture = textureLoader.load("./assets/rings.png");
 const ringsGeometry = new THREE.RingGeometry(0.7, 1.2, 128);
@@ -193,19 +129,11 @@ rings.rotation.x = Math.PI * 0.3; // flatten the ring
 saturn.add(rings);
 
 // uranus
-const uranusTexture = textureLoader.load("./assets/uranusmap.jpg");
-const uranusGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-const uranusMaterial = new THREE.MeshStandardMaterial({ map: uranusTexture });
-const uranus = new THREE.Mesh(uranusGeometry, uranusMaterial);
-uranus.name = "uranus";
+const uranus = createCelestialBody(0.5, "./assets/uranusmap.jpg", "uranus");
 scene.add(uranus);
 
 // neptune
-const neptuneTexture = textureLoader.load("./assets/neptunemap.jpg");
-const neptuneGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-const neptuneMaterial = new THREE.MeshStandardMaterial({ map: neptuneTexture });
-const neptune = new THREE.Mesh(neptuneGeometry, neptuneMaterial);
-neptune.name = "neptune";
+const neptune = createCelestialBody(0.5, "./assets/neptunemap.jpg", "neptune");
 scene.add(neptune);
 
 // orbits
