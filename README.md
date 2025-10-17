@@ -29,19 +29,19 @@ A small interactive Three.js demo that visualizes a simplified solar system with
 
 2. Quick options:
 
-- Using Python 3 (if installed):
+   - Using Python 3 (if installed):
 
-  - For Windows PowerShell:
+     - For Windows PowerShell:
 
-    python -m http.server 8000
+       python -m http.server 8000
 
-  - Then open `http://localhost:8000/` in your browser.
+     - Then open `http://localhost:8000/` in your browser.
 
-- Using Node.js `http-server` (if installed globally):
+   - Using Node.js `http-server` (if installed globally):
 
-  http-server -c-1 .
+     - http-server -c-1 .
 
-  Then open the printed URL (usually `http://127.0.0.1:8080`).
+     - Then open the printed URL (usually `http://127.0.0.1:8080`).
 
 3. Open the site in a modern browser (Chrome, Edge or Firefox) that supports ES modules and import maps.
 
