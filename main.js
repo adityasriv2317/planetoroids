@@ -246,49 +246,41 @@ const animate = () => {
   mercury.position.x = Math.cos(elapsedTime * 1) * 2.5;
   mercury.position.z = Math.sin(elapsedTime * 1) * 2.5;
   mercury.rotation.y += 0.01; // rotate mercury
-  mercury.rotation.x += Math.PI * 0.5 + 0.122173;
 
   // setup venus
   venus.position.x = Math.cos(elapsedTime * 0.8) * 4;
   venus.position.z = Math.sin(elapsedTime * -0.8) * 4;
   venus.rotation.y += 0.01; // rotate venus
-  venus.rotation.x += Math.PI * 0.5 + 0.059162;
 
   // setup earth
   earth.position.x = Math.cos(elapsedTime * 0.5) * 5.5;
   earth.position.z = Math.sin(elapsedTime * 0.5) * 5.5;
   earth.rotation.y += 0.01; // rotate earth
-  earth.rotation.x += Math.PI * 0.5;
 
   // setup mars
   mars.position.x = Math.cos(elapsedTime * 0.4) * 8;
   mars.position.z = Math.sin(elapsedTime * 0.4) * 8;
   mars.rotation.y += 0.01; // rotate mars
-  mars.rotation.x += Math.PI * 0.5 + 0.032287;
 
   // setup jupiter
   jupiter.position.x = Math.cos(elapsedTime * 0.2) * 13;
   jupiter.position.z = Math.sin(elapsedTime * 0.2) * 13;
   jupiter.rotation.y += 0.01; // rotate jupiter
-  jupiter.rotation.x += Math.PI * 0.5 + 0.022853;
 
   // setup saturn
   saturn.position.x = Math.cos(elapsedTime * 0.1) * 20;
   saturn.position.z = Math.sin(elapsedTime * 0.1) * 20;
   saturn.rotation.y += 0.008;
-  saturn.rotation.x += Math.PI * 0.5 + 0.043478;
 
   // setup uranus
   uranus.position.x = Math.cos(elapsedTime * 0.07) * 28;
   uranus.position.y = Math.sin(elapsedTime * 0.07) * 28;
   uranus.rotation.z += 0.008;
-  uranus.rotation.x += 0.013445;
 
   // setup neptune
   neptune.position.x = Math.cos(elapsedTime * 0.05) * 36;
   neptune.position.z = Math.sin(elapsedTime * 0.05) * 36;
   neptune.rotation.y += 0.008;
-  neptune.rotation.x += Math.PI * 0.5 + 0.030886;
 
   // Update controls
   controls.update();
